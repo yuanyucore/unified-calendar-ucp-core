@@ -1,0 +1,29 @@
+{
+  "name": "@unified-calendar/core",
+  "version": "1.0.0",
+  "description": "The official engine for the Unified Calendar Protocol (UCP).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "almanac": "node bin/almanac.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuanyucore/unified-calendar-ucp-core.git"
+  },
+  "keywords": [],
+  "author": "YuanYu (元宇) <support@yuanyucore.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yuanyucore/unified-calendar-ucp-core/issues"
+  },
+  "homepage": "https://unifiedcalendar.org",
+  "dependencies": {
+    "astronomy-engine": "^2.1.19",
+    "express": "^5.2.1",
+    "lunar-javascript": "^1.7.7"
+  },
+  "bin": {
+    "ucp-almanac": "./bin/almanac.js"
+  }
+}
