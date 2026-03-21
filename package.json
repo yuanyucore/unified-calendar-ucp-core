@@ -4,6 +4,7 @@
   "description": "The official engine for the Unified Calendar Protocol (UCP).",
   "main": "index.js",
   "private": false,
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "almanac": "node bin/almanac.js"
