@@ -29,6 +29,13 @@ const JIEQI_MAP = {
   "小寒": { pinyin: "Xiaohan", english: "Lesser Cold" }, "大寒": { pinyin: "Dahan", english: "Great Cold" }
 };
 
+// --- MANUAL PINYIN MAPPING (The Fix) ---
+const GAN_CHARS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+const GAN_PINYIN = ["Jia", "Yi", "Bing", "Ding", "Wu", "Ji", "Geng", "Xin", "Ren", "Gui"];
+const ZHI_CHARS = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+const ZHI_PINYIN = ["Zi", "Chou", "Yin", "Mao", "Chen", "Si", "Wu", "Wei", "Shen", "You", "Xu", "Hai"];
+
+
 // --- THE MASTER DECODE FUNCTION ---
 function decodeUCP(dateString) {
     const date = new Date(dateString);
@@ -46,10 +53,21 @@ function decodeUCP(dateString) {
     const solar = Solar.fromDate(date);
     const lunar = solar.getLunar();
     
-    // Get Pinyin from library
-    const yearPinyin = `${lunar.getYearGan()}-${lunar.getYearZhi()}`;
-    const monthPinyin = `${lunar.getMonthGan()}-${lunar.getMonthZhi()}`;
-    // Get Chinese characters from library
+    // CORRECTED: Use manual Pinyin mapping
+    const yearGanChar = lunar.getYearGan();
+    const yearZhiChar = lunar.getYearZhi();
+    const monthGanChar = lunar.getMonthGan();
+    const monthZhiChar = lunar.getMonthZhi();
+
+    const yearGanPinyin = GAN_PINYIN[GAN_CHARS.indexOf(yearGanChar)];
+    const yearZhiPinyin = ZHI_PINYIN[ZHI_CHARS.indexOf(yearZhiChar)];
+    const monthGanPinyin = GAN_PINYIN[GAN_CHARS.indexOf(monthGanChar)];
+    const monthZhiPinyin = ZHI_PINYIN[ZHI_CHARS.indexOf(monthZhiChar)];
+
+    const yearPinyin = `${yearGanPinyin}-${yearZhiPinyin}`;
+    const monthPinyin = `${monthGanPinyin}-${monthZhiPinyin}`;
+    
+    // Get Chinese characters for reference
     const yearChar = lunar.getYearInGanZhi();
     const monthChar = lunar.getMonthInGanZhi();
     const dayChar = lunar.getDayInGanZhi();
