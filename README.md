@@ -4,10 +4,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Maintained by Yuanyu](https://img.shields.io/badge/Maintained%20by-Yuanyu%20(元宇)-emerald?style=flat-square)](https://www.yuanyucore.com)
 
-> **One Timestamp. Five Civilizations.** 
-> The official open-source engine for synchronizing the Gregorian, Chinese, Indian (Saka), Buddhist, and Islamic (Hijri) calendars through pure astrophysics.
+> **One Timestamp. Seven Calendars.**
+> The official open-source engine for synchronizing seven major world calendars through pure, geocentric astrophysics.
 
-The **Unified Calendar Protocol (UCP)** is an open standard designed to solve the problem of "Intercalation Drift" and "Timezone Ghosts" in cultural timekeeping. It provides a single, machine-readable string that locks five major human civilizations to the same geocentric UTC moment.
+The **Unified Calendar Protocol (UCP)** is an open standard designed to solve "Intercalation Drift" and "Timezone Ghosts" in cultural timekeeping. It provides a single, machine-readable string that locks the following seven calendar systems to the same UTC moment:
+
+1.  **Gregorian Calendar** (Standard Civil)
+2.  **Xia (Hsia) Calendar** (Chinese Solar Term & Stem-Branch)
+3.  **Chinese Traditional Calendar** (Lunisolar)
+4.  **Hindu Lunisolar Calendar** (Vedic Tithi & Nakshatra)
+5.  **Buddhist Era (BE) Calendar**
+6.  **Saka Samvat Calendar** (National Calendar of India)
+7.  **Hijri Calendar** (Islamic, Umm al-Qura)
 
 This library is the core reference implementation, designed, built, and maintained by **[Yuanyu (元宇)](https://www.yuanyucore.com)**.
 
@@ -28,49 +36,56 @@ yarn add @unified-calendar/core
 
 ## 🛠️ Usage
 
-The engine is designed to be simple and robust.
+The engine is designed to be simple and robust. The `decodeUCP` function is the primary entry point.
 
 ```javascript
-// Import the core engine
-// Assuming a structure where the main file exports the core functions
-const { generateUCP, decodeUCP } = require('@unified-calendar/core');
+const { decodeUCP } = require('@unified-calendar/core');
 
-// 1. Generate a UCP string for a specific UTC moment
-const ucpString = generateUCP("2024-05-23T14:30:45Z");
+// 1. Decode a UTC timestamp to get all 7 calendar data points
+const data = decodeUCP("2026-03-21T14:30:00Z");
 
-console.log(ucpString);
-//> UE-12024 :: 05.23-08 :: 04.16.18 H11.15 [Bing-Chen] T14:30:45Z
+// 2. Print the full decoded object
+console.log(data);
+/*
+{
+  ucpString: 'UE-12026 :: 03.21-04 :: 02.03.03 H10.02 (U) [Jia-Wu] T14:30:00Z',
+  gregorian: 'Year 2026, Month 3, Day 21',
+  xia: 'Year 丙午, Month 辛卯, Day Jia-Wu (Solar Term: 春分)',
+  chinese: 'Year 4724, M: 2, D: 3',
+  hindu: 'Amanta Month 1, Tithi 3, Nakshatra 3',
+  buddhist: 'Year BE 2569, Lunar Month 2, Day 3',
+  saka: 'Year Saka 1947, Month 12, Day 30',
+  islamic: 'Year 1447 AH, Shawwal (M: 10), Day 2'
+}
+*/
 
-// 2. Decode a UCP string to get its cultural data
-// The decode function would be a feature to add to the library
-const decodedData = decodeUCP(ucpString); 
-console.log(decodedData.indian.amantaMonth);
-//> 2 (Meaning Vaisakha, the 2nd Indian month)
+// 3. Access a specific calendar
+console.log(data.saka);
+//> Year Saka 1947, Month 12, Day 30
 ```
 
-## 📋 The UCP String Anatomy
+## 🗓️ Almanac Generator
 
-The UCP string is divided into three logical blocks, designed for both machine and human readability:
+The library includes a powerful CLI tool to generate a full year's worth of synchronized data. This is perfect for testing, research, or generating almanacs.
 
-`[UNIVERSAL EPOCH] :: [SOLAR TRACK] :: [LUNAR & HIJRI TRACK] [TIME]`
+```bash
+# Generate the full almanac for 2026 and print to console
+npm run almanac 2026
 
-1.  **Universal Epoch (UE):** Based on the Holocene Era (HE), adding 10,000 years to the Gregorian year to prevent "Year Zero" bias.
-2.  **Solar Track:** Maps Gregorian `Month.Day` alongside the 24 Chinese Solar Terms (`Jieqi`).
-3.  **Lunar & Hijri Track:** A dense block containing:
-    *   Chinese Lunar Month (`04`)
-    *   Indian Tithi (`16`) & Nakshatra (`18`)
-    *   Islamic Hijri Month & Day (`H11.15`)
-    *   Chinese Sexagenary Day Pillar (`[Bing-Chen]`)
-4.  **Absolute Time:** Locked to UTC (`Z`) to ensure global synchronization.
-
----
+# Or, export the full almanac to a text file
+node bin/almanac.js 2026 > 2026_almanac.txt
+```
 
 ## 🔬 Scientific Foundation
 
-UCP is built on high-precision astronomical calculations to ensure accuracy across millennia:
-- **Geocentric Lock:** All calculations are performed in UTC to prevent regional discrepancies.
-- **Chinese:** Calculated using Solar Terms (Zhongqi) and a mathematically pure Sexagenary anchor.
-- **Indian:** Uses **Lahiri Ayanamsa** and the **Amanta** system (New Moon to New Moon) for consistent month mapping based on solar transits.
+UCP separates astronomical and civil calendars for maximum precision:
+- **Geocentric Lock:** All calculations are performed in UTC.
+- **Chinese Systems:**
+    - **Xia Calendar (Solar):** Tracks the 24 Solar Terms (`Jieqi`) and the pure mathematical progression of the Sexagenary (Stem-Branch) cycle for year, month, and day.
+    - **Traditional Calendar (Lunisolar):** Tracks the familiar lunar month and day used for festivals like the Spring Festival.
+- **Indian Systems:**
+    - **Hindu Lunisolar (Vedic):** Based on true astronomical positions of the Sun and Moon to calculate the `Tithi` (lunar day) and `Nakshatra` (lunar mansion) for religious observances. Uses **Lahiri Ayanamsa**.
+    - **Saka Samvat (National):** The official civil calendar of India, a tropical solar calendar with a fixed start date (March 22, or 21 in a leap year).
 - **Islamic:** Uses the **Umm al-Qura** algorithmic Hijri calendar, the official standard of Saudi Arabia.
 
 ---
@@ -79,11 +94,11 @@ UCP is built on high-precision astronomical calculations to ensure accuracy acro
 
 **Yuanyu (元宇)** is a technology lab focused on the core foundations of digital time and astronomical data. We believe that as humanity becomes more digitally unified, our timekeeping should respect both our shared astrophysics and our diverse cultural heritage.
 
-While this core library is open-source and free forever under the MIT license, Yuanyu also offers a **commercial Cloud API** for enterprise applications.
+While this core library is open-source and free forever under the MIT license, Yuanyu will also be offering a **commercial Cloud API** for enterprise applications.
 
 ### Yuanyu Calendar Cloud
 The API is designed for businesses requiring:
-- 🌍 **Global Holiday Data:** High-precision predictions for Lunar New Year, Eid, Diwali, Vesak, and hundreds of other cultural festivals.
+- 🌍 **Global Holiday Data:** High-precision predictions for festivals across all 7 calendar systems (e.g., Lunar New Year, Eid, Diwali, Holi, Vesak).
 - 📡 **Real-time Astronomical Events:** Notifications for Eclipses, Solstices, and New Moon sightings.
 - 📈 **Guaranteed SLAs:** High-availability endpoints for international HR, payroll, and logistics platforms.
 
